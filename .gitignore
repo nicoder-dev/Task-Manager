@@ -1,0 +1,16 @@
+# Para el proyecto principal
+.env
+.DS_Store
+node_modules/
+venv/
+__pycache__/
+*.pyc
+sql_app.db # La base de datos SQLite local
+
+# Ignorar la carpeta `node_modules` y `dist`/`build` en el frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Ignorar la carpeta `venv` en el backend
+backend/venv/
