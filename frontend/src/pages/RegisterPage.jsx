@@ -1,8 +1,20 @@
 // frontend/src/pages/RegisterPage.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate para redirigir
+import { useNavigate, Link } from 'react-router-dom';
+import {
+    Box,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
+    Text,
+    Heading,
+    VStack, // Para apilar elementos verticalmente
+    Alert,
+    AlertIcon,
+    AlertDescription
+} from '@chakra-ui/react';
 
-// Obtener la URL del backend desde las variables de entorno
 const API_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 function RegisterPage() {
@@ -11,13 +23,12 @@ function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const navigate = useNavigate(); // Hook para la navegación
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Previene el recargado de la página
-
-        setError(''); // Limpia errores previos
-        setSuccess(''); // Limpia mensajes de éxito previos
+        e.preventDefault();
+        setError('');
+        setSuccess('');
 
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden.');
@@ -39,12 +50,10 @@ function RegisterPage() {
             }
 
             const data = await response.json();
-            setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.');
-            // Opcional: Redirigir al usuario a la página de login después de un breve delay
+            setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión!');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
-
         } catch (err) {
             console.error('Error de registro:', err);
             setError(err.message || 'Hubo un problema al intentar registrarse.');
@@ -52,134 +61,92 @@ function RegisterPage() {
     };
 
     return (
-        <div style={styles.container}>
-            <h2 style={styles.heading}>Registro de Usuario</h2>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                {error && <p style={styles.error}>{error}</p>}
-                {success && <p style={styles.success}>{success}</p>}
-                <div style={styles.formGroup}>
-                    <label htmlFor="username" style={styles.label}>Nombre de Usuario:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </div>
-                <div style={styles.formGroup}>
-                    <label htmlFor="password" style={styles.label}>Contraseña:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </div>
-                <div style={styles.formGroup}>
-                    <label htmlFor="confirmPassword" style={styles.label}>Confirmar Contraseña:</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </div>
-                <button type="submit" style={styles.button}>Registrarse</button>
-            </form>
-            <p style={styles.linkText}>
-                ¿Ya tienes una cuenta? <span style={styles.link} onClick={() => navigate('/login')}>Inicia sesión aquí</span>
-            </p>
-        </div>
+        <Box
+            minH="100vh"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg="gray.100"
+            p={4}
+        >
+            <Box
+                bg="white"
+                p={8}
+                borderRadius="lg"
+                boxShadow="xl"
+                w="full"
+                maxW="md"
+            >
+                <Heading as="h2" size="xl" textAlign="center" mb={8} color="gray.800">
+                    Registro de Usuario
+                </Heading>
+
+                <VStack spacing={4} as="form" onSubmit={handleSubmit}>
+                    {error && (
+                        <Alert status="error" borderRadius="md">
+                            <AlertIcon />
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    )}
+                    {success && (
+                        <Alert status="success" borderRadius="md">
+                            <AlertIcon />
+                            <AlertDescription>{success}</AlertDescription>
+                        </Alert>
+                    )}
+
+                    <FormControl id="username">
+                        <FormLabel>Nombre de Usuario:</FormLabel>
+                        <Input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </FormControl>
+
+                    <FormControl id="password">
+                        <FormLabel>Contraseña:</FormLabel>
+                        <Input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </FormControl>
+
+                    <FormControl id="confirmPassword">
+                        <FormLabel>Confirmar Contraseña:</FormLabel>
+                        <Input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </FormControl>
+
+                    <Button
+                        type="submit"
+                        colorScheme="blue"
+                        size="lg"
+                        width="full"
+                        mt={4}
+                    >
+                        Registrarse
+                    </Button>
+                </VStack>
+
+                <Text mt={6} textAlign="center" color="gray.600">
+                    ¿Ya tienes una cuenta?{' '}
+                    <Link to="/login">
+                        <Text as="span" color="blue.500" fontWeight="medium" _hover={{ textDecoration: 'underline' }}>
+                            Inicia sesión aquí
+                        </Text>
+                    </Link>
+                </Text>
+            </Box>
+        </Box>
     );
 }
-
-// Estilos básicos para que se vea decente sin CSS externo
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f0f2f5',
-        padding: '20px',
-        fontFamily: 'Arial, sans-serif',
-    },
-    heading: {
-        color: '#333',
-        marginBottom: '30px',
-    },
-    form: {
-        backgroundColor: '#fff',
-        padding: '40px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-        width: '100%',
-        maxWidth: '400px',
-    },
-    formGroup: {
-        marginBottom: '20px',
-    },
-    label: {
-        display: 'block',
-        marginBottom: '8px',
-        color: '#555',
-        fontWeight: 'bold',
-    },
-    input: {
-        width: 'calc(100% - 20px)',
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        fontSize: '16px',
-    },
-    button: {
-        width: '100%',
-        padding: '12px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '18px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
-    },
-    buttonHover: {
-        backgroundColor: '#0056b3',
-    },
-    error: {
-        color: '#dc3545',
-        backgroundColor: '#f8d7da',
-        border: '1px solid #f5c6cb',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '15px',
-        textAlign: 'center',
-    },
-    success: {
-        color: '#28a745',
-        backgroundColor: '#d4edda',
-        border: '1px solid #c3e6cb',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '15px',
-        textAlign: 'center',
-    },
-    linkText: {
-        marginTop: '20px',
-        color: '#666',
-    },
-    link: {
-        color: '#007bff',
-        cursor: 'pointer',
-        textDecoration: 'underline',
-    }
-};
 
 export default RegisterPage;
